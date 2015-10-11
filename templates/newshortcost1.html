@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src={% static "jqueryui/external/jquery/jquery.js" %}></script>
+    <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.css" %}>
+    <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.standalone.css" %}>
+    <script type="text/javascript" src={% static "b_datepicker/js/bootstrap-datepicker.js" %}></script>
+    <script type="text/javascript">
+        var msg = "{{message}}"
+        if(msg){
+            alert(msg);
+        }
+        $(function() {
+            $('#start_date').datepicker({
+                format: "yyyy/mm",
+                minViewMode: 1,
+                todayBtn: false,
+                forceParse: false,
+                autoclose: true,
+                orientation: "top auto",
+                todayHighlight: false
+            });
+            $('#end_date').datepicker({
+                format: "yyyy/mm",
+                minViewMode: 1,
+                todayBtn: false,
+                forceParse: false,
+                autoclose: true,
+                orientation: "top auto",
+                todayHighlight: false
+            });
+        });
+    </script>
+</head>
+<body>
+<form action="newshortcost" method="post" id="form1" name="form1">{% csrf_token %}
+    <p>名稱:<br><input type="text" id="name" name="name" value="{{name}}" /> </p>
+    <p>分期金額:<br><input type="number" id="cost" name="cost" value="{{cost}}" /></p>
+    <p>付款類型:<br>
+    <select id="cash_type" name="cash_type">
+    {% for cash_type in cash_type_list %}
+        <option value="{{ cash_type.name }}">{{ cash_type.cname }}</option>
+    {% endfor %}
+    </select>
+    </p>
+    <p>起始日:<br><input type="text" id="start_date" name="start_date" value="{{start_date}}" /></p>
+    <p>到期日:<br><input type="text" id="end_date" name="end_date" value="{{end_date}}" /></p>
+    <p>備註:<br><textarea id="memo" name="memo">{{ memo }}</textarea></p>
+    <p>總金額:<br><input type="number" id="total_cost" name="total_cost" value="{{total_cost}}" /></p>
+    <p>剩餘金額:<br><input type="number" id="rent_cost" name="rent_cost" value="{{rent_cost}}" /></p>
+    <p><input type="submit" id="btnok" name="btnok" value="送出" />　</p>
+</form>
+</body>
+</html>

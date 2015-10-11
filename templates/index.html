@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load custom_tag %}
+{% load humanize %}
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>預算管理系統</title>
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="author" content="Eason" />
+		<link rel="shortcut icon" href="../favicon.ico">
+        {% include "basecss.html" %}
+        {% include "top_menu_cj.html" %}
+        {% include "basejs.html" %}
+		<script src={% static "js/modernizr.custom.js" %}></script>
+	</head>
+	<body>
+		<div class="container" style="overflow:auto;">
+            <!-- Top Navigation -->
+            {% include "top_menu.html" %}
+            <div class="content">
+                <div style="margin-left: 20px; width: 50%;float: left;">
+                    <p><h2 align="center">本月預算</h2></p>
+                    <hr size="8px" align="center" width="100%">
+                    <div class="CSSTableGenerator03">
+                        <table style="min-height:150px;">
+                            <tr style="height:30px;font-size: 20px;">
+                                <td>薪資獎金</td>
+                                <td>零用金</td>
+                                <td>總結資料</td>
+                                <!--<td>投資成本</td>-->
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    <div><label class="item-name">實領薪資</label><div class="item-number">{{ thismonth.salary|intcomma }}</div></div>
+                                    <div><label class="item-name">獎金</label><div class="item-number">{{ thismonth.bonus|intcomma }}</div></div>
+                                </td>
+                                <td style="vertical-align: top">
+                                    <div><label class="item-name">零用金</label><div class="item-number">{{ thismonth.common_cost|intcomma }}</div></div>
+                                    <div><label class="item-name">零用金餘額</label>
+                                        {% if rcommon_cost < 0 %}
+                                            <div class="item-number" style="color: red">{{ rcommon_cost|intcomma }}</div>
+                                        {% else %}
+                                            <div class="item-number">{{ rcommon_cost|intcomma }}</div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td style="vertical-align: top">
+                                    <div><label class="item-name">本月餘額</label>
+                                    <span style="font-size:14px; color:#36F; font-weight:600;">(薪資獎金-本月所有花費)</span>
+                                    {% if balance2 < 0 %}
+                                        <div class="item-number" style="color: red">{{ balance2|intcomma }}</div>
+                                    {% else %}
+                                        <div class="item-number">{{ balance2|intcomma }}</div>
+                                    {% endif %}
+                                    </div>
+                                    <div><label class="item-name">總存款結餘</label>
+                                    <span style="font-size:14px; color:#36F; font-weight:600;">(本月餘額-前月總存款結餘)</span>
+                                    {% if total_balance < 0 %}
+                                        <div class="item-number" style="color: red">{{ total_balance|intcomma }}</div>
+                                    {% else %}
+                                        <div class="item-number">{{ total_balance|intcomma }}</div>
+                                    {% endif %}
+                                    </div>
+                                    <div><label class="item-name">總可用金</label>
+                                    <span style="font-size:14px; color:#36F; font-weight:600;">(零用金可用餘額+本月總存款結餘)</span>
+                                    {% if thismonth_balance < 0 %}
+                                        <div class="item-number" style="color: red">{{ thismonth_balance|intcomma }}</div>
+                                    {% else %}
+                                        <div class="item-number">{{ thismonth_balance|intcomma }}</div>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                                <!--<td style="vertical-align: top">
+                                    <div><label class="item-name">理財</label><div class="item-number">1000000</div></div>
+                                    <div><label class="item-name">Total</label><div class="item-number">1000000</div></div>
+                                    <div><label class="item-name">總餘額</label>
+                                    <span style="font-size:14px; color:#36F; font-weight:600;">(Total-投資損益and零用金轉出入)</span>
+                                    <div class="item-number">1000000</div>
+                                    </div>
+                                </td>-->
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div class="CSSTableGenerator04">
+                        <table style="min-height:150px;">
+                            <tr style="height:30px;">
+                                <td>投資支出</td>
+                                <td>固定花費</td>
+                                <td>其他收入</td>
+                                <td>其他花費</td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top" >
+                                    <div><label class="item-name">自我成長</label><div class="item-number">{{ thismonth.invest_grow|intcomma }}</div></div>
+                                    <div><label class="item-name">理財</label><div class="item-number">{{ thismonth.invest_money|intcomma }}</div></div>
+                                </td>
+                                <td style="vertical-align: top">
+                                    <div><label class="item-name">通信費</label><div class="item-number">{{ thismonth.phone_cost|intcomma }}</div></div>
+                                    <div><label class="item-name">孝親費</label><div class="item-number">{{ thismonth.parent_cost|intcomma }}</div></div>
+                                </td>
+                                <td style="vertical-align: top">
+                                    {% for other_income in thisother_income %}
+                                        <div><div class="item-name2">{{ other_income.name }}</div><div class="item-number">{{ other_income.cost|intcomma }}</div></div>
+                                    {% endfor %}
+                                </td>
+                                <td style="vertical-align: top">
+                                    {% for other_cost in thisother_cost %}
+                                        <div><div class="item-name2">{{ other_cost.name }}</div><div class="item-number">{{ other_cost.cost|intcomma }}</div></div>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div class="CSSTableGenerator05" style="width: 100%; float: left;margin-right:5px">
+                        <table style="min-height:100px;">
+                            <tr style="height:30px;">
+                                <td>信用卡總結</td>
+                                <td>投資資產總結</td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    {% for cash_type1 in cash_type_list_nocash %}
+                                    <div><div class="item-name2">{{ cash_type1.cname }}</div><div class="item-number">{{ credit_total_dict|keyvalue:cash_type1.name|intcomma }}</div></div>
+                                    {% endfor %}
+                                </td>
+                                <td style="vertical-align: top">
+                                        <div><label class="item-name">總投入金額</label><div class="item-number">{{ invest_total|intcomma }}</div></div>
+                                        <div><label class="item-name">餘額</label>
+                                            <span style="font-size:14px; color:#36F; font-weight:600;">(Total-投資損益and零用金轉出入)</span>
+                                            {% if invest_rest < 0 %}
+                                                <div class="item-number" style="color: red">{{ invest_rest|intcomma }}</div>
+                                            {% else %}
+                                                <div class="item-number">{{ invest_rest|intcomma }}</div>
+                                            {% endif %}
+                                        </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div style="margin-left: 50px; width: 44%;float: left;">
+                    <p><h2 align="center">全部資產總結</h2></p>
+                    <hr size="8px" align="center" width="100%">
+                    <div class="CSSTableGenerator06" style="width: 100%; float: left;margin-right:5px;">
+                        <table style="min-height:150px;">
+                            <tr style="height:30px;">
+                                <td>全部資產總結</td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    <div><label class="item-name">總投資資產餘額</label>
+                                        {% if invest_rest < 0 %}
+                                            <div class="item-number" style="color: red">{{ invest_rest|intcomma }}</div>
+                                        {% else %}
+                                            <div class="item-number">{{ invest_rest|intcomma }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div><label class="item-name">+本月總可用金</label>
+                                        {% if thismonth_balance < 0 %}
+                                            <div class="item-number" style="color: red">{{ thismonth_balance|intcomma }}</div>
+                                        {% else %}
+                                            <div class="item-number">{{ thismonth_balance|intcomma }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div><label class="item-name">-信用卡未到期金額</label>
+                                        <div class="item-number">{{ total_rcost|intcomma }}</div>
+                                    </div>
+                                    <div><label class="item-name">合計</label>
+                                        {% if alltotal < 0 %}
+                                            <div class="item-number" style="color: red">{{ alltotal|intcomma }}</div>
+                                        {% else %}
+                                            <div class="item-number">{{ alltotal|intcomma }}</div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p style="padding-top: 80px; margin-top: 80px;"><br><h2 align="center">短期固定花費&信用卡分期</h2></p>
+                    <hr size="8px" align="center" width="100%">
+                    <div class="CSSTableGenerator07" style="width: 100%; float: left;margin-right:5px; overflow: auto; max-height:270px">
+                        <table style="min-height:50px;">
+                            <tr style="height:30px;">
+                                <td>信用卡名稱</td>
+                                <td>商品名稱</td>
+                                <td>起始日</td>
+                                <td>到期日</td>
+                                <td>月繳</td>
+                                <td>總額</td>
+                                <td>未到期本金</td>
+                                <td>剩餘期數</td>
+                            </tr>
+                            {% for fixed_short_cost in fixed_short_cost_list %}
+                            <tr>
+                                <td style="vertical-align: top"><div><div class="item-name2">{{cash_type_dict|keyvalue:fixed_short_cost.cash_type }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-name2">{{ fixed_short_cost.name }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-name2">{{ fixed_short_cost.start_date }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-name2">{{ fixed_short_cost.end_date }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ fixed_short_cost.cost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ fixed_short_cost.total_cost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ fixed_short_cost.rent_cost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ fixed_short_cost.rent_num|intcomma }}</div></div></td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td style="vertical-align: top; text-align: center" colspan="4"><div><div class="item-name">合計</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ total_cost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ total_tcost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number">{{ total_rcost|intcomma }}</div></div></td>
+                                <td style="vertical-align: top"><div><div class="item-number"></div></div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+		</div><!-- /container -->
+	</body>
+</html>

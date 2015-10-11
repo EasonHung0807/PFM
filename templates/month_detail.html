@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load custom_tag %}
+{% load humanize %}
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>預算管理系統</title>
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="author" content="Eason" />
+		<link rel="shortcut icon" href="../favicon.ico">
+        {% include "basecss.html" %}
+        {% include "top_menu_cj.html" %}
+        {% include "basejs.html" %}
+        <script src={% static "bootstrap/bootstrap.min.js" %}></script>
+        <link href={% static "bootstrap/bootstrap.min.css" %} rel="stylesheet">
+		<script src={% static "js/modernizr.custom.js" %}></script>
+        <!-- 日期選擇器 -->
+        <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.css" %}>
+        <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.standalone.css" %}>
+        <script type="text/javascript" src={% static "b_datepicker/js/bootstrap-datepicker.js" %}></script>
+        <!-- 表格 -->
+        <script type="text/javascript" language="javascript" src={% static "DataTable/jquery.dataTables.js" %}></script>
+        <link rel="stylesheet" type="text/css" href={% static "DataTable/jquery.dataTables1.css" %}>
+        <script type="text/javascript">
+            var msg = "{{message}}"
+            if(msg){
+                alert(msg);
+            }
+            $(function() {
+                $('#insertdate').datepicker({
+                    format: "yyyy/mm/dd",
+                    todayBtn: true,
+                    forceParse: true,
+                    autoclose: true,
+                    orientation: "top auto",
+                    todayHighlight: true
+                });
+                $('#monthly_items').dataTable( {
+                    "lengthMenu": [[3, 10, -1], [3, 10, "All"]],
+                    "order": [[ 0, "desc" ]]
+                } );
+            });
+        </script>
+	</head>
+	<body>
+		<div class="container" style="overflow:auto;">
+            <!-- Top Navigation -->
+            {% include "top_menu.html" %}
+            <div class="content" align="center">
+                   <form method="post" class="bootstrap-frm" name="monthlyform" id="monthlyform" action="monthdetail">{% csrf_token %}
+                        <input type="hidden" value={{ thisdate }} id="thisdate" name="thisdate" size="4" />
+                        <h1>月結零用金
+                            <span>Please fill all the texts in the fields.</span>
+                        </h1>
+                    <div style="float:left; width:500px; margin-top:-20px;">
+                        <h3>新增</h3>
+                        <label>
+                            <span>金額</span>
+                            <input type="number" id="money" name="money" min="0" size="5" required value="0" />
+                        </label>
+
+                        <label>
+                            <span>類型</span>
+                            <select id="cash_type" name="cash_type">
+                            {% for cash_type in cash_type_list %}
+                                <option value="{{ cash_type.name }}">{{ cash_type.cname }}</option>
+                            {% endfor %}
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>備註</span>
+                            <input type="text" id="memo" name="memo" size="10" placeholder="可不填"/>
+                        </label>
+
+                        <label>
+                            <span>日期</span>
+                            <input type="text" value="{{ insertdate }}" id="insertdate" name="insertdate" size="10" />
+                        </label>
+                         <label>
+                            <span>&nbsp;</span>
+                            <input type="submit" value="送出" id="btn_monthlysubmit" name="btn_monthlysubmit" class="button"  />
+                        </label>
+                     </div>
+                     <div style="float:left; width:400px; margin-top:-20px">
+                        <h3>訊息</h3>
+                        <label>
+                            <span>零用金</span>
+                            <input type="text" id="common_cost" name="common_cost" value="{{ common_cost|intcomma }}" size="10" readonly="readonly" />
+                        </label>
+                        <label>
+                            <span>已領</span>
+                            <input type="text" id="total_cash" name="total_cash" value="{{ total_cash|intcomma }}" size="10" readonly="readonly" />
+                        </label>
+                        <label>
+                            <span>刷卡</span>
+                            <input type="text" id="total_credit" name="total_credit" value="{{ total_credit|intcomma }}" size="10" readonly="readonly" />
+                        </label>
+                        <label>
+                            <span>餘額</span>
+                            <input type="text" id="common_costr" name="common_costr" value="{{ rcommon_cost|intcomma }}" size="10" readonly="readonly" />
+                        </label>
+                     </div>
+                     <div style="height:280px"></div>
+                    </form>
+            <br />
+            	<div>
+                    <table id="monthly_items" class="cell-border">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; font-size:16px">日期</th>
+                            <th style="text-align:center; font-size:16px">現金提領</th>
+                            <th style="text-align:center; font-size:16px">總現金提領</th>
+                            <th style="text-align:center; font-size:16px">信用卡</th>
+                            <th style="text-align:center; font-size:16px">信用卡銀行</th>
+                            <th style="text-align:center; font-size:16px">總信用卡</th>
+                            <th style="text-align:center; font-size:16px">備註</th>
+                        </tr>
+                    </thead>
+                    {% for monthly in monthly_list %}
+                        <tr align="center" bgcolor="#00CCCC" class="{% cycle 'row1' 'row2' %}">
+                            <td>{{ monthly.datetime }}</td><td>{{ monthly.cash|intcomma }}</td><td>{{ monthly.total_cash|intcomma }}</td><td>{{ monthly.credit|intcomma }}</td><td>{{cash_type_dict|keyvalue:monthly.cash_type }}</td><td>{{ monthly.total_credit|intcomma }}</td><td>{{ monthly.memo }}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
+		</div><!-- /container -->
+	</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load custom_tag %}
+{% load humanize %}
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>預算管理系統</title>
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="author" content="Eason" />
+		<link rel="shortcut icon" href="../favicon.ico">
+        {% include "basecss.html" %}
+        {% include "top_menu_cj.html" %}
+        {% include "basejs.html" %}
+        <script src={% static "bootstrap/bootstrap.min.js" %}></script>
+        <link href={% static "bootstrap/bootstrap.min.css" %} rel="stylesheet">
+		<script src={% static "js/modernizr.custom.js" %}></script>
+        <!-- 日期選擇器 -->
+        <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.css" %}>
+        <link rel="stylesheet" type="text/css" href={% static "b_datepicker/css/bootstrap-datepicker.standalone.css" %}>
+        <script type="text/javascript" src={% static "b_datepicker/js/bootstrap-datepicker.js" %}></script>
+        <!-- 表格 -->
+        <script type="text/javascript" language="javascript" src={% static "DataTable/jquery.dataTables.js" %}></script>
+        <link rel="stylesheet" type="text/css" href={% static "DataTable/jquery.dataTables1.css" %}>
+        <script type="text/javascript">
+            var msg = "{{message}}"
+            if(msg){
+                alert(msg);
+            }
+            $(function() {
+                $('#insertdate').datepicker({
+                    format: "yyyy/mm/dd",
+                    todayBtn: true,
+                    forceParse: true,
+                    autoclose: true,
+                    orientation: "top auto",
+                    todayHighlight: true
+                });
+                $('#invest_items').dataTable( {
+                    "lengthMenu": [[3, 10, -1], [3, 10, "All"]],
+                    "order": [[ 0, "desc" ]]
+                } );
+            });
+        </script>
+	</head>
+	<body>
+		<div class="container" style="overflow:auto;">
+            <!-- Top Navigation -->
+            {% include "top_menu.html" %}
+            <div class="content" align="center">
+               <form method="post" class="bootstrap-frm" name="investform" id="investform" action="investdetail">{% csrf_token %}
+                    <input type="hidden" value={{ thisdate }} id="thisdate" name="thisdate" size="4" />
+                    <h1>投資資產總結
+                        <span>Please fill all the texts in the fields.</span>
+                    </h1>
+                <div style="float:left; width:500px; margin-top:-20px;">
+                    <h3>新增</h3>
+                    <span style="margin-left:100px;">請輸入正整數，正負會自動轉換</span>
+                    <label>
+                        <span>金額</span>
+                        <input type="number" id="cash" name="cash" min="0" size="5" required value="0" />
+
+                    </label>
+                    <label>
+                        <span>類型</span>
+                        <select id="invest_type" name="invest_type">
+                        {% for invest_type in invest_type_list %}
+                            <option value="{{ invest_type.name }}">{{ invest_type.cname }}</option>
+                        {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        <span>備註</span>
+                        <input type="text" id="memo" name="memo" size="10" placeholder="可不填"/>
+                    </label>
+                    <label>
+                        <span>日期</span>
+                        <input type="text" value="{{ insertdate }}" id="insertdate" name="insertdate" size="10" />
+                    </label>
+                     <label>
+                        <span>&nbsp;</span>
+                        <input type="submit" value="送出" id="btn_investsubmit" name="btn_investsubmit" class="button"  />
+                    </label>
+                 </div>
+                 <div style="float:left; width:450px; margin-top:-20px">
+                    <h3>訊息</h3>
+                    <label>
+                        <span>總投入金額</span>
+                        <input type="text" id="invest_cost" name="invest_cost" value="{{ total|intcomma }}" size="10" readonly="readonly" />
+                    </label>
+                    <label>
+                        <span>總餘額</span>
+                        <input type="text" id="invest_total" name="invest_total" value="{{ rest|intcomma }}" size="10" readonly="readonly" />
+                    </label>
+                 </div>
+                  <div style="height:300px;"></div>
+                </form>
+            <br />
+            	<div>
+                    <table id="invest_items" class="cell-border">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; font-size:16px">日期</th>
+                            <th style="text-align:center; font-size:16px">金額</th>
+                            <th style="text-align:center; font-size:16px">類別</th>
+                            <th style="text-align:center; font-size:16px">備註</th>
+                        </tr>
+                    </thead>
+                    {% for invest in invest_list %}
+                        <tr align="center" bgcolor="#00CCCC" class="{% cycle 'row1' 'row2' %}">
+                            <td>{{ invest.datetime }}</td><td>{{ invest.cash|intcomma }}</td><td>{{invest_type_dict|keyvalue:invest.invest_type }}</td><td>{{ invest.memo }}</td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
+		</div><!-- /container -->
+	</body>
+</html>

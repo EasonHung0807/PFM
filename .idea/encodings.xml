@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/home/views.py" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/static" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/templates/README.md" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/basecss.html" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/index.html" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/indexnomonth.html" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/invest_detail.html" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/menu_js.html" charset="x-windows-950" />
+    <file url="file://$PROJECT_DIR$/templates/month_detail.html" charset="x-windows-950" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

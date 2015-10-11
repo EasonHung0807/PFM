@@ -1,0 +1,78 @@
+<script type="text/javascript">
+    $(function() {
+        //上個月
+        $('#btn_pmonth').on("click",function(){
+            var form = $('<form action="{{thispage}}" method="post">' +
+            '<input type="hidden" name="thisdate" value={{thisdate}} />' +
+            '<input type="hidden" name="atr" value="pre" />' +
+            '<input type="hidden" name="csrfmiddlewaretoken" value={{csrf_token}} />' +
+            '</form>');
+            $('body').append(form);
+            $(form).submit();
+        });
+        //下個月
+        $('#btn_nmonth').on('click', function() {
+            var form = $('<form action="{{thispage}}" method="post">' +
+            '<input type="hidden" name="thisdate" value={{thisdate}} />' +
+            '<input type="hidden" name="atr" value="nxt" />' +
+            '<input type="hidden" name="csrfmiddlewaretoken" value={{csrf_token}} />' +
+            '</form>');
+            $('body').append(form);
+            $(form).submit();
+        });
+    });
+</script>
+<div class="codrops-top clearfix">
+    <a href="javascript:void(0)" id="btn_pmonth" name="btn_pmonth"><span class="top_font">Previous Month</span></a>
+    <span class="right"><a href="javascript:void(0)" id="btn_nmonth" name="btn_nmonth"><span class="top_font">Next Month</span></a></span>
+</div>
+<header class="codrops-header">
+    <h1>{{ thisdate }}</h1>
+</header>
+<ul id="nav" class="dropdown dropdown-horizontal">
+	<li><a href="./">回首頁</a></li>
+	<li><span class="dir">月份資料管理</span>
+		<ul>
+			<li><a href="newmonth">新增月份資料</a></li>
+            <li><a href="mmonth">修改月份資料</a></li>
+			<li><a href="monthdetail">月份明細資料</a></li>
+			<li><span class="dir">test</span>
+				<ul>
+					<li><a href="./">test01</a></li>
+					<li><a href="./">test02</a></li>
+					<li><a href="./">test03</a></li>
+				</ul>
+			</li>
+			<li class="divider"><a href="./">More...</a></li>
+		</ul>
+	</li>
+	<li><span class="dir">信用卡管理</span>
+		<ul>
+			<li><a href="newshortcost">新增分期資料</a></li>
+			<li><span class="dir">test</span>
+				<ul>
+					<li><a href="./">test01</a></li>
+					<li><a href="./">test02</a></li>
+					<li><a href="./">test03</a></li>
+				</ul>
+			</li>
+			<li class="divider"><a href="./">More...</a></li>
+		</ul>
+	</li>
+	<li><span class="dir">投資資產管理</span>
+		<ul>
+			<li><a href="investdetail">投資資產異動</a></li>
+            <li><a href="./">金額修正</a></li>
+			<li><span class="dir">test</span>
+				<ul>
+					<li><a href="./">test01</a></li>
+					<li><a href="./">test02</a></li>
+					<li><a href="./">test03</a></li>
+				</ul>
+			</li>
+			<li class="divider"><a href="./">More...</a></li>
+		</ul>
+	</li>
+	<li><a href="./">總預算表</a></li>
+	<li><a href="./">test</a></li>
+</ul>
